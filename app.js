@@ -91,21 +91,27 @@ app.post('/webhook', function (req, res) {
       var pageID = pageEntry.id;
       var timeOfEvent = pageEntry.time;
 
-      console.log("Webhook received unknown messagingEvent: ");
+      
 
       // Iterate over each messaging event
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.optin) {
+          console.log("Webhook received an authentication ");
           receivedAuthentication(messagingEvent);
         } else if (messagingEvent.message) {
+          console.log("Webhook received an message ");
           receivedMessage(messagingEvent);
         } else if (messagingEvent.delivery) {
+          console.log("Webhook received a delivery ");
           receivedDeliveryConfirmation(messagingEvent);
         } else if (messagingEvent.postback) {
+          console.log("Webhook received a postback");
           receivedPostback(messagingEvent);
         } else if (messagingEvent.read) {
+          console.log("Webhook received a read");
           receivedMessageRead(messagingEvent);
         } else if (messagingEvent.account_linking) {
+          console.log("Webhook received an account link");
           receivedAccountLink(messagingEvent);
         } else {
           console.log("Webhook received unknown messagingEvent: ", messagingEvent);
