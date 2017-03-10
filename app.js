@@ -821,6 +821,12 @@ function sendAccountLinking(recipientId) {
  *
  */
 function callSendAPI(messageData) {
+  
+  PAGE_ACCESS_TOKEN
+
+  console.log("Getting ready to call send with %s", 
+          PAGE_ACCESS_TOKEN);
+
   request({
     uri: 'https://graph.facebook.com/v2.6/me/messages',
     qs: { access_token: PAGE_ACCESS_TOKEN },
