@@ -544,6 +544,9 @@ function sendTextMessage(recipientId, messageText) {
     }
   };
 
+  console.log("sendTextMessage: here is the messageData");
+  console.log(JSON.stringify(messageData));
+
   callSendAPI(messageData);
 }
 
