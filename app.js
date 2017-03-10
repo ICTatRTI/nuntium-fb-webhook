@@ -96,22 +96,16 @@ app.post('/webhook', function (req, res) {
       // Iterate over each messaging event
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.optin) {
-          console.log("Webhook received an authentication ");
           receivedAuthentication(messagingEvent);
         } else if (messagingEvent.message) {
-          console.log("Webhook received an message ");
           receivedMessage(messagingEvent);
         } else if (messagingEvent.delivery) {
-          console.log("Webhook received a delivery ");
           receivedDeliveryConfirmation(messagingEvent);
         } else if (messagingEvent.postback) {
-          console.log("Webhook received a postback");
           receivedPostback(messagingEvent);
         } else if (messagingEvent.read) {
-          console.log("Webhook received a read");
           receivedMessageRead(messagingEvent);
         } else if (messagingEvent.account_linking) {
-          console.log("Webhook received an account link");
           receivedAccountLink(messagingEvent);
         } else {
           console.log("Webhook received unknown messagingEvent: ", messagingEvent);
@@ -238,26 +232,17 @@ function receivedMessage(event) {
   var appId = message.app_id;
   var metadata = message.metadata;
 
- 
-
   // You may get a text or attachment but not both
   var messageText = message.text;
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
 
- console.log("Received message isEcho %s, messageId %s, appId %s, metadata %s, messageText %s, quickReply %s :", 
-    isEcho, messageId, appId, metadata, messageText, quickReply );
-
   if (isEcho) {
     // Just logging message echoes to console
-    console.log("Received echo for message %s and app %d with metadata %s", 
-      messageId, appId, metadata);
+
     return;
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
-    console.log("Quick reply for message %s with payload %s",
-      messageId, quickReplyPayload);
-
     sendTextMessage(senderID, "Quick reply tapped");
     return;
   }
