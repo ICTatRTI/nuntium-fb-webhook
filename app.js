@@ -17,6 +17,7 @@ const
   express = require('express'),
   https = require('https'),  
   request = require('request');
+  nuntium = require('nuntium-client')
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -246,6 +247,18 @@ function receivedMessage(event) {
     sendTextMessage(senderID, "Quick reply tapped");
     return;
   }
+
+   /****************
+   *
+   *
+   *  Call nuntium here, until then this:
+   * 
+   ****************/
+
+   //var client = new nuntium.Client('https://nuntium.instedd.org','your_account', 'your_application', 'your_password');
+      //client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
+      //console.log(data.guid);
+    //});
 
   if (messageText) {
 
