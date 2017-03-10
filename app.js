@@ -245,7 +245,7 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
 
- console.log("Received message isEcho %d, messageId %d, appId %d, metadata %d, messageText %d, quickReply %d :", 
+ console.log("Received message isEcho %s, messageId %s, appId %s, metadata %s, messageText %s, quickReply %s :", 
     isEcho, messageId, appId, metadata, messageText, quickReply );
 
   if (isEcho) {
@@ -321,6 +321,8 @@ function receivedMessage(event) {
         break;
 
       default:
+        console.log("Nothing else matches going with default %s with payload %s",
+      senderID, messageText);
         sendTextMessage(senderID, messageText);
     }
   } else if (messageAttachments) {
