@@ -91,6 +91,8 @@ app.post('/webhook', function (req, res) {
       var pageID = pageEntry.id;
       var timeOfEvent = pageEntry.time;
 
+      console.log("Webhook received unknown messagingEvent: ");
+
       // Iterate over each messaging event
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.optin) {
@@ -835,4 +837,3 @@ app.listen(app.get('port'), function() {
 });
 
 module.exports = app;
-
