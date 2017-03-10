@@ -238,13 +238,15 @@ function receivedMessage(event) {
   var appId = message.app_id;
   var metadata = message.metadata;
 
-  console.log("Received message isEcho %d, messageId %d, appId %d, metadata %d:", 
-    isEcho, messageId, appId, metadata);
+ 
 
   // You may get a text or attachment but not both
   var messageText = message.text;
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
+
+ console.log("Received message isEcho %d, messageId %d, appId %d, metadata %d, messageText %d, quickReply %d :", 
+    isEcho, messageId, appId, metadata, messageText, quickReply );
 
   if (isEcho) {
     // Just logging message echoes to console
