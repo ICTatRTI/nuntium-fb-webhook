@@ -238,6 +238,9 @@ function receivedMessage(event) {
   var appId = message.app_id;
   var metadata = message.metadata;
 
+  console.log("Received message isEcho %d, messageId %d, appId %d, metadata %d:", 
+    isEcho, messageId, appId, metadata);
+
   // You may get a text or attachment but not both
   var messageText = message.text;
   var messageAttachments = message.attachments;
