@@ -52,7 +52,19 @@ const SERVER_URL = (process.env.SERVER_URL) ?
   (process.env.SERVER_URL) :
   config.get('serverURL');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
+const NUNTIUM_HOSTNAME = (process.env.NUNTIUM_HOSTNAME) ?
+  (process.env.NUNTIUM_HOSTNAME) :
+  config.get('nuntiumHostname');
+
+const NUNTIUM_USERNAME = (process.env.NUNTIUM_USERNAME) ?
+  (process.env.NUNTIUM_USERNAME) :
+  config.get('nuntiumUser');
+
+const NUNTIUM_PASSWORD = (process.env.NUNTIUM_PASSWORD) ?
+  (process.env.NUNTIUM_PASSWORD) :
+  config.get('nuntiumPassword');
+
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_HOSTNAME && NUNTIUM_USERNAME && NUNTIUM_PASSWORD)) {
   console.error("Missing config values");
   process.exit(1);
 }
