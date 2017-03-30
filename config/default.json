@@ -5,5 +5,5 @@
     "serverURL": "https://ecig-webhooks.herokuapp.com",
     "nuntiumHostname" : "nuntium.instedd.org",
     "nuntiumUser" : "nuntiumUser",
-    "nuntiumPassword" : "nuntiumUser",
+    "nuntiumPassword" : "nuntiumUser"
 }
