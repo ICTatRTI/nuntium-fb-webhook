@@ -1,0 +1,9 @@
+{
+    "appSecret": "GET FROM FACEBOOK APP",
+    "pageAccessToken": "GET FROM FACEBOOK APP",
+    "validationToken": "MUST MATCH THE VERIFY TOKEN FROM FB WEBHOOK SETTINGS",
+    "serverURL": "YOUR PUBLIC WEBHOOK URL",
+    "nuntiumHostname" : "NUNTIUM URL",
+    "nuntiumUser" : "NUNTIUM USER",
+    "nuntiumPassword" : "NUNTIUM PASSWORD"
+}

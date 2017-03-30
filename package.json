@@ -1,7 +1,7 @@
 {
-  "name": "messenger-get-started",
+  "name": "nuntium-fb-webhook",
   "version": "1.0.0",
-  "description": "Get started example for Messenger Platform",
+  "description": "A webhook for Facebook messenger to use for InSTEDD's Nuntium",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fbsamples/messenger-platform-samples.git"
+    "url": "https://github.com/ICTatRTI/nuntium-fb-webhook.git"
   },
-  "author": "Facebook",
+  "author": "RTI",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.15.0",
