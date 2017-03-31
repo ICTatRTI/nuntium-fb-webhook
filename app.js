@@ -52,9 +52,9 @@ const SERVER_URL = (process.env.SERVER_URL) ?
   (process.env.SERVER_URL) :
   config.get('serverURL');
 
-const NUNTIUM_HOSTNAME = (process.env.NUNTIUM_HOSTNAME) ?
-  (process.env.NUNTIUM_HOSTNAME) :
-  config.get('nuntiumHostname');
+const NUNTIUM_URL = (process.env.NUNTIUM_URL) ?
+  (process.env.NUNTIUM_URL) :
+  config.get('nuntiumURL');
 
 const NUNTIUM_USERNAME = (process.env.NUNTIUM_USERNAME) ?
   (process.env.NUNTIUM_USERNAME) :
@@ -64,7 +64,7 @@ const NUNTIUM_PASSWORD = (process.env.NUNTIUM_PASSWORD) ?
   (process.env.NUNTIUM_PASSWORD) :
   config.get('nuntiumPassword');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_HOSTNAME && NUNTIUM_USERNAME && NUNTIUM_PASSWORD)) {
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -260,17 +260,13 @@ function receivedMessage(event) {
     return;
   }
 
-   /****************
-   *
-   *
-   *  Call nuntium here, until then this:
-   * 
-   ****************/
 
-   //var client = new nuntium.Client('https://nuntium.instedd.org','your_account', 'your_application', 'your_password');
-      //client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
-      //console.log(data.guid);
-    //});
+
+   var client = new nuntium.Client(NUNTIUM_URL,'your_account', 'your_application', 'your_password');
+    
+    client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
+      console.log(data.guid);
+    });
 
   if (messageText) {
 
