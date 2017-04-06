@@ -29,4 +29,4 @@ All webhook code is in `app.js`. It is routed to `/webhook`. This project handle
 
 ## License
 
-See the LICENSE file in the root directory of this source tree. Feel free to useand modify the code.
+See the LICENSE file in the root directory of this source tree. Feel free to use and modify the code.
