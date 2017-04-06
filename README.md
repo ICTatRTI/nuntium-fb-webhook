@@ -1,8 +1,10 @@
-# Messenger Platform Sample -- node.js
+# Nuntium Facebook Webhook
 
-This project is an example server for Messenger Platform built in Node.js. With this app, you can create a questionnaire in Surveda and make it availble in Facebook messenger. 
+This project is an example server for Messenger Platform built in Node.js. With this app, you can create a questionnaire in Surveda and make it availble in Facebook messenger. Here is what this looks like:
 
 ![Nuntium Webhook](https://github.com/ICTatRTI/nuntium-fb-webhook/wiki/images/webhook.png)
+
+To see this in action click here: http://m.me/ecigarettestudy
 
 ## Setup
 
