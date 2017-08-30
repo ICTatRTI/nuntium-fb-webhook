@@ -68,7 +68,7 @@ const NUNTIUM_APPLICATION = (process.env.NUNTIUM_APPLICATION) ?
   (process.env.NUNTIUM_APPLICATION) :
   config.get('nuntiumApplication');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD)) {
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD&& NUNTIUM_APPLICATION)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -264,12 +264,12 @@ function receivedMessage(event) {
     return;
   }
 
-
-
    var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
     client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
-      console.log(data.guid);
+      console.log('sent nuntium AO message (application originated')
+      console.log(data);
+      // Do some other stuff here
     });
 
   if (messageText) {
