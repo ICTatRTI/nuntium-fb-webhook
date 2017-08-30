@@ -16,6 +16,7 @@ The easiest way to get this thing going is to run it on heroku. You'll need to d
 * NUNTIUM_PASSWORD
 * NUNTIUM_URL
 * NUNTIUM_USERNAME
+* NUNTIUM_APPLICATION
 * SERVER_URL
 
 ## Run

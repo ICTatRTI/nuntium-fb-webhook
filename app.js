@@ -64,6 +64,10 @@ const NUNTIUM_PASSWORD = (process.env.NUNTIUM_PASSWORD) ?
   (process.env.NUNTIUM_PASSWORD) :
   config.get('nuntiumPassword');
 
+const NUNTIUM_APPLICATION = (process.env.NUNTIUM_APPLICATION) ?
+  (process.env.NUNTIUM_APPLICATION) :
+  config.get('nuntiumApplication');
+
 if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD)) {
   console.error("Missing config values");
   process.exit(1);
@@ -262,7 +266,7 @@ function receivedMessage(event) {
 
 
 
-   var client = new nuntium.Client(NUNTIUM_URL,'your_account', 'your_application', 'your_password');
+   var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
     client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
       console.log(data.guid);
