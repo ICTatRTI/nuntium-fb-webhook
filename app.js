@@ -234,6 +234,10 @@ function receivedAuthentication(event) {
  * then we'll simply confirm that we've received the attachment.
  * 
  */
+function firstEntity(nlp, name) {
+  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
+
 function receivedMessage(event) {
   var senderID = event.sender.id;
   var recipientID = event.recipient.id;
@@ -254,6 +258,11 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
 
+
+  // Put the respondent id in a safe place
+  //TODO
+  
+
   if (isEcho) {
     // Just logging message echoes to console
 
@@ -271,6 +280,8 @@ function receivedMessage(event) {
       console.log(data);
       // Do some other stuff here
     });
+
+
 
   if (messageText) {
 
@@ -292,7 +303,16 @@ function receivedMessage(event) {
         console.log("Nothing else matches going with default %s with payload %s",
       senderID, messageText);
 
-        sendTextMessage(senderID, messageText);
+
+    // Use the NLP out of a can
+    const greeting = firstEntity(message.nlp, 'greeting');
+    if (greeting && greeting.confidence > 0.8) {
+      sendTextMessage(senderID, "Well, hello there!");
+    } else { 
+      sendTextMessage(senderID, messageText);
+    }
+
+        
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
