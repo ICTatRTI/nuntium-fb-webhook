@@ -300,7 +300,8 @@ function receivedMessage(event) {
 
     // Use the NLP out of a can
     const greeting = firstEntity(message.nlp, 'greeting');
-    console.log("greeting is %s", greeting );
+    console.log("greeting is %s and %s", greeting, message.nlp );
+    
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
     } else { 
