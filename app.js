@@ -227,12 +227,6 @@ function receivedAuthentication(event) {
  * object format can vary depending on the kind of message that was received.
  * Read more at https://developers.facebook.com/docs/messenger-platform/webhook-reference/message-received
  *
- * For this example, we're going to echo any text that we get. If we get some 
- * special keywords ('button', 'generic', 'receipt'), then we'll send back
- * examples of those bubbles to illustrate the special message bubbles we've 
- * created. If we receive a message with an attachment (image, video, audio), 
- * then we'll simply confirm that we've received the attachment.
- * 
  */
 function firstEntity(nlp, name) {
   return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
@@ -306,6 +300,7 @@ function receivedMessage(event) {
 
     // Use the NLP out of a can
     const greeting = firstEntity(message.nlp, 'greeting');
+    console.log("greeting is %s", greeting );
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
     } else { 
@@ -318,6 +313,8 @@ function receivedMessage(event) {
     sendTextMessage(senderID, "Message with attachment received");
   }
 }
+
+
 
 
 /*
