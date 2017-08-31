@@ -290,6 +290,12 @@ function receivedMessage(event) {
 
       case 'quick reply':
         sendQuickReply(senderID);
+        break;  
+      case 'yes'
+        sendQuickReply(senderID);
+        break;  
+      case 'no'
+        sendQuickReply(senderID);
         break;        
 
 
@@ -300,7 +306,7 @@ function receivedMessage(event) {
 
     // Use the NLP out of a can nlp.entities[name][0]
     const greeting = firstEntity(message.nlp, 'greeting');
-    console.log("greeting is %s and %s", greeting, message.nlp.entities['greeting'][0] );
+    //console.log("greeting is %s and %s", greeting, message.nlp.entities['greeting'][0] );
     
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
