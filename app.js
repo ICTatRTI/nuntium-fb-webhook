@@ -281,11 +281,13 @@ function receivedMessage(event) {
       case 'quick reply':
         sendQuickReply(senderID);
         break;  
+      case 'Yes':
       case 'yes':
-        addToRecipientList(senderID);
+        addToSample(senderID);
         break;  
+      case 'No':
       case 'no':
-        removeFromRecipientList(senderID);
+        removeFromSample(senderID);
         break;        
 
       default:
