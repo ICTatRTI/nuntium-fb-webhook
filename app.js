@@ -253,13 +253,8 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
 
-  // Put the respondent id in a safe place
-  //TODO
-  
-
   if (isEcho) {
     // Just logging message echoes to console
-
     return;
   } else if (quickReply) {
     var quickReplyPayload = quickReply.payload;
@@ -274,8 +269,6 @@ function receivedMessage(event) {
       console.log(data);
       // Do some other stuff here
     });
-
-
 
   if (messageText) {
 
@@ -295,7 +288,6 @@ function receivedMessage(event) {
         removeFromRecipientList(senderID);
         break;        
 
-
       default:
         console.log("Nothing else matches going with default %s with payload %s",
       senderID, messageText); 
@@ -307,14 +299,17 @@ function receivedMessage(event) {
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
     } else { 
-      sendTextMessage(senderID, "Would you like to participate in a survey?");
-    
-
-        
+      sendTextMessage(senderID, "Would you like to participate in a survey?");    
     }
+
+    }
+
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
   }
+
+  
+
 }
 
 
