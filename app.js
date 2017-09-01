@@ -242,6 +242,8 @@ function receivedMessage(event) {
     senderID, recipientID, timeOfMessage);
   console.log(JSON.stringify(message));
 
+  console.log(JSON.stringify(event.sender));
+
   var isEcho = message.is_echo;
   var messageId = message.mid;
   var appId = message.app_id;
@@ -270,6 +272,7 @@ function receivedMessage(event) {
       // Do some other stuff here
     });
 
+console.log()
   if (messageText) {
 
 
