@@ -18,6 +18,7 @@ const
   https = require('https'),  
   request = require('request'),
   nuntium = require('nuntium-client');
+  request = require('request');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -89,38 +90,6 @@ app.get('/webhook', function(req, res) {
   }  
 });
 
-
-/*
- * All callbacks for Messenger are POST-ed. They will be sent to the same
- * webhook. Be sure to subscribe your app to your page to receive callbacks
- * for your page. 
- * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
- *
- */
-// Message processing
-app.post('/webhook', function (req, res) {
-  console.log(req.body);
-  var data = req.body;
-
-  // Make sure this is a page subscription
-  if (data.object === 'page') {
-    
-    // Iterate over each entry - there may be multiple if batched
-    data.entry.forEach(function(entry) {
-      var pageID = entry.id;
-      var timeOfEvent = entry.time;
-
-        console.log(JSON.stringify(entry.messaging));//entry.messaging
-    });
-
-    // Assume all went well.
-    //
-    // You must send back a 200, within 20 seconds, to let us know
-    // you've successfully received the callback. Otherwise, the request
-    // will time out and we will keep trying to resend.
-    res.sendStatus(200);
-  }
-});
 
 /*
  * This path is used for account linking. The account linking call-to-action
@@ -303,7 +272,14 @@ console.log()
 
 function addToSample(senderID){
 //TODO
-console.log("Adding %s to sample",senderID); 
+
+request('https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender&access_token='+PAGE_ACCESS_TOKEN, function (error, response, body) {
+  console.log('error:', error); // Print the error if one occurred 
+  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
+  console.log('body:', body); // Print the HTML for the Google homepage. 
+});
+
+ 
 }
 
 function removeFromSample(senderID){
