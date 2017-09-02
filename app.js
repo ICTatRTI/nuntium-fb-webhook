@@ -18,7 +18,6 @@ const
   https = require('https'),  
   request = require('request'),
   nuntium = require('nuntium-client');
-  request = require('request');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
