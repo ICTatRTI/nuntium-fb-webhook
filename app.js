@@ -110,16 +110,7 @@ app.post('/webhook', function (req, res) {
       var pageID = entry.id;
       var timeOfEvent = entry.time;
 
-      // Iterate over each messaging event
-      entry.messaging.forEach(function(event) {
-        if (event.message) {
-          receivedMessage(event);
-        } else if (event.postback) {
-          receivedPostback(event);   
-        } else {
-          console.log("Webhook received unknown event: ", event);
-        }
-      });
+        console.log(JSON.stringify(entry.messaging));//entry.messaging
     });
 
     // Assume all went well.
