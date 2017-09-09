@@ -314,6 +314,24 @@ function removeFromSample(senderID){
   //TODO
   console.log("Removing %s to sample",senderID); 
 
+  var MongoClient = require('mongodb').MongoClient;
+  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+    if (err) throw err;
+ 
+    var user = {
+       first_name: 'Adam',
+        last_name: 'Preston',
+        gender: 'male',
+        id: '1314499451905732'
+    };
+
+    db.collection(SAMPLE_COLLECTION_NAME).deleteOne(user, function(err, res) {
+      if (err) throw err;
+      console.log("1 document inserted");
+      db.close();
+    });
+  });
+
 
 }
 
@@ -466,56 +484,7 @@ function sendButtonMessage(recipientId) {
   callSendAPI(messageData);
 }
 
-/*
- * Send a Structured Message (Generic Message type) using the Send API.
- *
- */
-function sendGenericMessage(recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: "template",
-        payload: {
-          template_type: "generic",
-          elements: [{
-            title: "rift",
-            subtitle: "Next-generation virtual reality",
-            item_url: "https://www.oculus.com/en-us/rift/",               
-            image_url: SERVER_URL + "/assets/rift.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/rift/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for first bubble",
-            }],
-          }, {
-            title: "touch",
-            subtitle: "Your Hands, Now in VR",
-            item_url: "https://www.oculus.com/en-us/touch/",               
-            image_url: SERVER_URL + "/assets/touch.png",
-            buttons: [{
-              type: "web_url",
-              url: "https://www.oculus.com/en-us/touch/",
-              title: "Open Web URL"
-            }, {
-              type: "postback",
-              title: "Call Postback",
-              payload: "Payload for second bubble",
-            }]
-          }]
-        }
-      }
-    }
-  };  
 
-  callSendAPI(messageData);
-}
 
 
 
