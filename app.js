@@ -17,7 +17,8 @@ const
   express = require('express'),
   https = require('https'),  
   request = require('request'),
-  nuntium = require('nuntium-client');
+  nuntium = require('nuntium-client'),
+  mongo = require('mongodb');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -68,10 +69,28 @@ const NUNTIUM_APPLICATION = (process.env.NUNTIUM_APPLICATION) ?
   (process.env.NUNTIUM_APPLICATION) :
   config.get('nuntiumApplication');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD&& NUNTIUM_APPLICATION)) {
+const SAMPLE_DATABASE_URL = (process.env.SAMPLE_DATABASE_URL) ?
+  (process.env.SAMPLE_DATABASE_URL) :
+  config.get('sampleDatabaseURL');
+
+const SAMPLE_COLLECTION_NAME = (process.env.SAMPLE_COLLECTION_NAME) ?
+  (process.env.SAMPLE_COLLECTION_NAME) :
+  config.get('sampleCollectionName');
+
+if (!(APP_SECRET && VALIDATION_TOKEN 
+  && PAGE_ACCESS_TOKEN 
+  && SERVER_URL 
+  && NUNTIUM_URL 
+  && NUNTIUM_USERNAME 
+  && NUNTIUM_PASSWORD
+  && NUNTIUM_APPLICATION
+  && SAMPLE_DATABASE_URL
+  && SAMPLE_COLLECTION_NAME)) {
   console.error("Missing config values");
   process.exit(1);
 }
+
+
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -206,14 +225,6 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
 
-  if (isEcho) {
-    // Just logging message echoes to console
-    return;
-  } else if (quickReply) {
-    var quickReplyPayload = quickReply.payload;
-    sendTextMessage(senderID, "Quick reply tapped");
-    return;
-  }
 
    var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
@@ -223,7 +234,7 @@ function receivedMessage(event) {
       // Do some other stuff here
     });
 
-console.log()
+
   if (messageText) {
 
 
@@ -270,20 +281,40 @@ console.log()
 
 
 function addToSample(senderID){
-//TODO
 
-request('https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender&access_token='+PAGE_ACCESS_TOKEN, function (error, response, body) {
-  console.log('error:', error); // Print the error if one occurred 
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
-  console.log('body:', body); // Print the HTML for the Google homepage. 
-});
+  console.log("Adding %s to sample",senderID); 
 
+  request('https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender&access_token='+PAGE_ACCESS_TOKEN, function (error, response, body) {
+    console.log('error:', error); // Print the error if one occurred 
+    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
+    console.log('body:', body); // Print the HTML for the Google homepage. 
+  });
+
+  var MongoClient = require('mongodb').MongoClient;
+  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+    if (err) throw err;
+ 
+    var user = {
+       first_name: 'Adam',
+        last_name: 'Preston',
+        gender: 'male',
+        id: '1314499451905732'
+    };
+
+    db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
+      if (err) throw err;
+      console.log("1 document inserted");
+      db.close();
+    });
+  });
  
 }
 
 function removeFromSample(senderID){
-//TODO
-console.log("Adding %s to sample",senderID); 
+  //TODO
+  console.log("Removing %s to sample",senderID); 
+
+
 }
 
 /*

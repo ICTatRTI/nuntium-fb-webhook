@@ -5,5 +5,10 @@
     "serverURL": "YOUR PUBLIC WEBHOOK URL",
     "nuntiumHostname" : "NUNTIUM URL",
     "nuntiumUser" : "NUNTIUM USER",
-    "nuntiumPassword" : "NUNTIUM PASSWORD"
+    "nuntiumPassword" : "NUNTIUM PASSWORD",
+    "nuntiumApplication" : "NUNTIUM_APPLICATION",
+    "nuntiumURL" : "NUNTIUM_APPLICATION",
+    "sampleDatabaseURL": "mongodb://USER:PASSWORD@www.mlab.com:PORT/database_name",
+    "sampleCollectionName": "COLLECTION_NAME",
+
 }
