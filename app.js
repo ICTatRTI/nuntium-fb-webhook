@@ -238,9 +238,10 @@ function receivedMessage(event) {
 
   console.log("Received message for user %d and page %d at %d with message:", 
     senderID, recipientID, timeOfMessage);
-  console.log(JSON.stringify(message));
+  
+  console.log("Message: "+JSON.stringify(message));
 
-  console.log(JSON.stringify(event.sender));
+  console.log("Sender: "+JSON.stringify(event.sender));
 
   var isEcho = message.is_echo;
   var messageId = message.mid;
@@ -252,16 +253,15 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
 
-
-   var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
+  var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
     client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
-      console.log('sent nuntium AO message (application originated')
-      console.log(data);
+      // This isn't implemented yet
+      // console.log('sent nuntium AO message (application originated')
+      //console.log(data);
       // Do some other stuff here
     });
 
-console.log()
   if (messageText) {
 
 
@@ -319,7 +319,7 @@ function addToSample(senderID){
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       
-      //console.log(JSON.stringify(body));
+      console.log("this the body: "+ JSON.stringify(body));
       resp = JSON.parse(body);
       console.log("First name: "+ resp['first_name']) ; 
       console.log("Last name: "+ resp['last_name']) ;   
