@@ -108,8 +108,6 @@ app.post('/webhook', function (req, res) {
       var pageID = pageEntry.id;
       var timeOfEvent = pageEntry.time;
 
-      
-
       // Iterate over each messaging event
       pageEntry.messaging.forEach(function(messagingEvent) {
         if (messagingEvent.optin) {
@@ -255,15 +253,6 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
 
-  if (isEcho) {
-    // Just logging message echoes to console
-    return;
-  } else if (quickReply) {
-    var quickReplyPayload = quickReply.payload;
-    sendTextMessage(senderID, "Quick reply tapped");
-    return;
-  }
-
    var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
     client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
@@ -312,20 +301,78 @@ console.log()
   } else if (messageAttachments) {
     sendTextMessage(senderID, "Message with attachment received");
   }
-
-  
+ 
 
 }
 
 
 function addToSample(senderID){
-//TODO
-console.log("Adding %s to sample",senderID); 
+  
+  var MongoClient = require('mongodb').MongoClient;
+  console.log("Adding %s to sample: ",senderID); 
+
+  request({
+    uri: 'https://graph.facebook.com/v2.6/'+STUDY_ID+'?fields=first_name,last_name,profile_pic,gender',
+    qs: { access_token: PAGE_ACCESS_TOKEN },
+    method: 'GET'
+
+  }, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      
+      //console.log(JSON.stringify(body));
+      resp = JSON.parse(body);
+      console.log("First name: "+ resp['first_name']) ; 
+      console.log("Last name: "+ resp['last_name']) ;   
+      console.log("Gender: "+ resp['gender']) ; 
+  
+      // Add to sample database
+       MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+      if (err) throw err;
+   
+      var user = {
+         first_name: resp['first_name'],
+          last_name: resp['last_name'],
+          gender: resp['gender'],
+          id: senderID
+      };
+
+      db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
+        if (err) throw err;
+        console.log("1 document inserted");
+        db.close();
+      });
+    });
+      
+    } else {
+      console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+    }
+  }); 
+
+  
+ 
 }
 
 function removeFromSample(senderID){
-//TODO
-console.log("Adding %s to sample",senderID); 
+
+  console.log("Removing %s to sample",senderID); 
+
+  var MongoClient = require('mongodb').MongoClient;
+  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+    if (err) throw err;
+ 
+    var user = {
+       first_name: 'Adam',
+        last_name: 'Preston',
+        gender: 'male',
+        id: '1314499451905732'
+    };
+
+    db.collection(SAMPLE_COLLECTION_NAME).deleteOne(user, function(err, res) {
+      if (err) throw err;
+      console.log("1 document inserted");
+      db.close();
+    });
+  });
 }
 
 /*
