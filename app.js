@@ -302,7 +302,6 @@ function receivedMessage(event) {
     sendTextMessage(senderID, "Message with attachment received");
   }
  
-
 }
 
 
@@ -320,7 +319,7 @@ function addToSample(senderID){
     if (!error && response.statusCode == 200) {
       
       console.log("this the body: "+ JSON.stringify(body));
-      resp = JSON.parse(body);
+      var resp = JSON.parse(body);
       console.log("First name: "+ resp['first_name']) ; 
       console.log("Last name: "+ resp['last_name']) ;   
       console.log("Gender: "+ resp['gender']) ; 
