@@ -312,7 +312,7 @@ function addToSample(senderID){
   console.log("Adding %s to sample: ",senderID); 
 
   request({
-    uri: 'https://graph.facebook.com/v2.6/'+STUDY_ID+'?fields=first_name,last_name,profile_pic,gender',
+    uri: 'https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender',
     qs: { access_token: PAGE_ACCESS_TOKEN },
     method: 'GET'
 
@@ -361,15 +361,12 @@ function removeFromSample(senderID){
     if (err) throw err;
  
     var user = {
-       first_name: 'Adam',
-        last_name: 'Preston',
-        gender: 'male',
-        id: '1314499451905732'
+        study_id: senderID
     };
 
     db.collection(SAMPLE_COLLECTION_NAME).deleteOne(user, function(err, res) {
       if (err) throw err;
-      console.log("1 document inserted");
+      console.log("1 document deleted");
       db.close();
     });
   });
