@@ -17,8 +17,7 @@ const
   express = require('express'),
   https = require('https'),  
   request = require('request'),
-  nuntium = require('nuntium-client'),
-  mongo = require('mongodb');
+  nuntium = require('nuntium-client');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -69,28 +68,10 @@ const NUNTIUM_APPLICATION = (process.env.NUNTIUM_APPLICATION) ?
   (process.env.NUNTIUM_APPLICATION) :
   config.get('nuntiumApplication');
 
-const SAMPLE_DATABASE_URL = (process.env.SAMPLE_DATABASE_URL) ?
-  (process.env.SAMPLE_DATABASE_URL) :
-  config.get('sampleDatabaseURL');
-
-const SAMPLE_COLLECTION_NAME = (process.env.SAMPLE_COLLECTION_NAME) ?
-  (process.env.SAMPLE_COLLECTION_NAME) :
-  config.get('sampleCollectionName');
-
-if (!(APP_SECRET && VALIDATION_TOKEN 
-  && PAGE_ACCESS_TOKEN 
-  && SERVER_URL 
-  && NUNTIUM_URL 
-  && NUNTIUM_USERNAME 
-  && NUNTIUM_PASSWORD
-  && NUNTIUM_APPLICATION
-  && SAMPLE_DATABASE_URL
-  && SAMPLE_COLLECTION_NAME)) {
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD&& NUNTIUM_APPLICATION)) {
   console.error("Missing config values");
   process.exit(1);
 }
-
-
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -98,7 +79,6 @@ if (!(APP_SECRET && VALIDATION_TOKEN
  *
  */
 app.get('/webhook', function(req, res) {
-  console.log("Calling webhook");
   if (req.query['hub.mode'] === 'subscribe' &&
       req.query['hub.verify_token'] === VALIDATION_TOKEN) {
     console.log("Validating webhook");
@@ -109,6 +89,54 @@ app.get('/webhook', function(req, res) {
   }  
 });
 
+
+/*
+ * All callbacks for Messenger are POST-ed. They will be sent to the same
+ * webhook. Be sure to subscribe your app to your page to receive callbacks
+ * for your page. 
+ * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
+ *
+ */
+app.post('/webhook', function (req, res) {
+  var data = req.body;
+
+  // Make sure this is a page subscription
+  if (data.object == 'page') {
+    // Iterate over each entry
+    // There may be multiple if batched
+    data.entry.forEach(function(pageEntry) {
+      var pageID = pageEntry.id;
+      var timeOfEvent = pageEntry.time;
+
+      
+
+      // Iterate over each messaging event
+      pageEntry.messaging.forEach(function(messagingEvent) {
+        if (messagingEvent.optin) {
+          receivedAuthentication(messagingEvent);
+        } else if (messagingEvent.message) {
+          receivedMessage(messagingEvent);
+        } else if (messagingEvent.delivery) {
+          receivedDeliveryConfirmation(messagingEvent);
+        } else if (messagingEvent.postback) {
+          receivedPostback(messagingEvent);
+        } else if (messagingEvent.read) {
+          receivedMessageRead(messagingEvent);
+        } else if (messagingEvent.account_linking) {
+          receivedAccountLink(messagingEvent);
+        } else {
+          console.log("Webhook received unknown messagingEvent: ", messagingEvent);
+        }
+      });
+    });
+
+    // Assume all went well.
+    //
+    // You must send back a 200, within 20 seconds, to let us know you've 
+    // successfully received the callback. Otherwise, the request will time out.
+    res.sendStatus(200);
+  }
+});
 
 /*
  * This path is used for account linking. The account linking call-to-action
@@ -214,6 +242,7 @@ function receivedMessage(event) {
     senderID, recipientID, timeOfMessage);
   console.log(JSON.stringify(message));
 
+  console.log(JSON.stringify(event.sender));
 
   var isEcho = message.is_echo;
   var messageId = message.mid;
@@ -226,6 +255,14 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
 
+  if (isEcho) {
+    // Just logging message echoes to console
+    return;
+  } else if (quickReply) {
+    var quickReplyPayload = quickReply.payload;
+    sendTextMessage(senderID, "Quick reply tapped");
+    return;
+  }
 
    var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
@@ -235,7 +272,7 @@ function receivedMessage(event) {
       // Do some other stuff here
     });
 
-
+console.log()
   if (messageText) {
 
 
@@ -282,58 +319,13 @@ function receivedMessage(event) {
 
 
 function addToSample(senderID){
-
-  console.log("Adding %s to sample",senderID); 
-
-  request('https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender&access_token='+PAGE_ACCESS_TOKEN, function (error, response, body) {
-    console.log('error:', error); // Print the error if one occurred 
-    console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received 
-    console.log('body:', body); // Print the HTML for the Google homepage. 
-  });
-
-  var MongoClient = require('mongodb').MongoClient;
-  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
-    if (err) throw err;
- 
-    var user = {
-       first_name: 'Adam',
-        last_name: 'Preston',
-        gender: 'male',
-        id: '1314499451905732'
-    };
-
-    db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
-      if (err) throw err;
-      console.log("1 document inserted");
-      db.close();
-    });
-  });
- 
+//TODO
+console.log("Adding %s to sample",senderID); 
 }
 
 function removeFromSample(senderID){
-  //TODO
-  console.log("Removing %s to sample",senderID); 
-
-  var MongoClient = require('mongodb').MongoClient;
-  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
-    if (err) throw err;
- 
-    var user = {
-       first_name: 'Adam',
-        last_name: 'Preston',
-        gender: 'male',
-        id: '1314499451905732'
-    };
-
-    db.collection(SAMPLE_COLLECTION_NAME).deleteOne(user, function(err, res) {
-      if (err) throw err;
-      console.log("1 document inserted");
-      db.close();
-    });
-  });
-
-
+//TODO
+console.log("Adding %s to sample",senderID); 
 }
 
 /*
@@ -485,7 +477,56 @@ function sendButtonMessage(recipientId) {
   callSendAPI(messageData);
 }
 
+/*
+ * Send a Structured Message (Generic Message type) using the Send API.
+ *
+ */
+function sendGenericMessage(recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "template",
+        payload: {
+          template_type: "generic",
+          elements: [{
+            title: "rift",
+            subtitle: "Next-generation virtual reality",
+            item_url: "https://www.oculus.com/en-us/rift/",               
+            image_url: SERVER_URL + "/assets/rift.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/rift/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for first bubble",
+            }],
+          }, {
+            title: "touch",
+            subtitle: "Your Hands, Now in VR",
+            item_url: "https://www.oculus.com/en-us/touch/",               
+            image_url: SERVER_URL + "/assets/touch.png",
+            buttons: [{
+              type: "web_url",
+              url: "https://www.oculus.com/en-us/touch/",
+              title: "Open Web URL"
+            }, {
+              type: "postback",
+              title: "Call Postback",
+              payload: "Payload for second bubble",
+            }]
+          }]
+        }
+      }
+    }
+  };  
 
+  callSendAPI(messageData);
+}
 
 
 
