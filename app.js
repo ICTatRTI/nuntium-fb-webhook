@@ -76,16 +76,8 @@ const SAMPLE_COLLECTION_NAME = (process.env.SAMPLE_COLLECTION_NAME) ?
   (process.env.SAMPLE_COLLECTION_NAME) :
   config.get('sampleCollectionName');
 
-if (!(APP_SECRET && VALIDATION_TOKEN 
-  && PAGE_ACCESS_TOKEN 
-  && SERVER_URL 
-  && NUNTIUM_URL 
-  && NUNTIUM_USERNAME 
-  && NUNTIUM_PASSWORD
-  && NUNTIUM_APPLICATION
-  && SAMPLE_DATABASE_URL
-  && SAMPLE_COLLECTION_NAME)) {
-  console.error("Missing config values");
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD && NUNTIUM_APPLICATION && SAMPLE_COLLECTION_NAME && SAMPLE_COLLECTION_NAME)) {
+  console.error("Some config values are missing, alright");
   process.exit(1);
 }
 
