@@ -68,7 +68,23 @@ const NUNTIUM_APPLICATION = (process.env.NUNTIUM_APPLICATION) ?
   (process.env.NUNTIUM_APPLICATION) :
   config.get('nuntiumApplication');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD&& NUNTIUM_APPLICATION)) {
+const SAMPLE_DATABASE_URL = (process.env.SAMPLE_DATABASE_URL) ?
+  (process.env.SAMPLE_DATABASE_URL) :
+  config.get('sampleDatabaseURL');
+
+const SAMPLE_COLLECTION_NAME = (process.env.SAMPLE_COLLECTION_NAME) ?
+  (process.env.SAMPLE_COLLECTION_NAME) :
+  config.get('sampleCollectionName');
+
+if (!(APP_SECRET && VALIDATION_TOKEN 
+  && PAGE_ACCESS_TOKEN 
+  && SERVER_URL 
+  && NUNTIUM_URL 
+  && NUNTIUM_USERNAME 
+  && NUNTIUM_PASSWORD
+  && NUNTIUM_APPLICATION
+  && SAMPLE_DATABASE_URL
+  && SAMPLE_COLLECTION_NAME)) {
   console.error("Missing config values");
   process.exit(1);
 }
