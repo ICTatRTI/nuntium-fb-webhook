@@ -283,7 +283,7 @@ function receivedMessage(event) {
         break;  
       case 'Yes':
       case 'yes':
-        addToSample(senderID);
+        addToSample(senderID, timeOfMessage);
         break;  
       case 'No':
       case 'no':
@@ -313,7 +313,7 @@ function receivedMessage(event) {
 }
 
 
-function addToSample(senderID){
+function addToSample(senderID, timeOfMessage){
   
   var MongoClient = require('mongodb').MongoClient;
   console.log("Adding %s to sample: ",senderID); 
@@ -340,7 +340,8 @@ function addToSample(senderID){
          first_name: resp['first_name'],
           last_name: resp['last_name'],
           gender: resp['gender'],
-          id: senderID
+          sender_id: senderID,
+          created_at: new Date(timeOfMessage)
       };
 
       db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
