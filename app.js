@@ -271,8 +271,6 @@ function receivedMessage(event) {
   
   console.log("Message: "+JSON.stringify(message));
 
-  console.log("Sender: "+JSON.stringify(event.sender));
-
   var isEcho = message.is_echo;
   var messageId = message.mid;
   var appId = message.app_id;
@@ -318,13 +316,17 @@ function receivedMessage(event) {
       senderID, messageText); 
 
     // Use the NLP out of a can nlp.entities[name][0]
-    const greeting = firstEntity(message.nlp, 'greeting');
-    console.log("greeting is  "+ greeting );
+    const greeting = firstEntity(message.nlp, 'greetings');
+    const intent = firstEntity(message.nlp, 'intent');
     
+
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
-    } else { 
-      sendTextMessage(senderID, "Would you like to participate in a survey?");    
+    } else if(intent && intent.confidence > 0.8 && intent.value == "unenroll") { 
+        sendTextMessage(senderID, "No problem. I will take you off the list now"); 
+        removeFromSample(senderID);
+    } else {
+      sendTextMessage(senderID, "Would you like to participate in a survey?");  
     }
 
     }
