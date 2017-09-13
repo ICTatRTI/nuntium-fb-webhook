@@ -15,9 +15,12 @@ const
   config = require('config'),
   crypto = require('crypto'),
   express = require('express'),
+  csv = require('express-csv'),
   https = require('https'),  
   request = require('request'),
-  nuntium = require('nuntium-client');
+  nuntium = require('nuntium-client'),
+  MongoClient = require('mongodb').MongoClient, 
+  assert = require('assert');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
@@ -167,6 +170,25 @@ app.get('/authorize', function(req, res) {
   });
 });
 
+app.get('/csv', function(req, res) {
+  
+  MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+  assert.equal(null, err);
+
+  var col = db.collection(SAMPLE_COLLECTION_NAME);
+    // Get first two documents that match the query
+    col.find({}, {'_id': false}).toArray(function(err, docs) {
+      assert.equal(null, err);
+      res.csv(docs);
+      db.close();
+    });
+
+});
+  
+
+});
+
+
 /*
  * Verify that the callback came from Facebook. Using the App Secret from 
  * the App Dashboard, we can verify the signature that is sent with each 
@@ -263,15 +285,16 @@ function receivedMessage(event) {
 
   var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
     
+    /*
     client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
       // This isn't implemented yet
-      // console.log('sent nuntium AO message (application originated')
-      //console.log(data);
+      console.log('sent nuntium AO message (application originated')
+      console.log(data);
       // Do some other stuff here
     });
+    */
 
   if (messageText) {
-
 
     switch (messageText) {
 
@@ -296,7 +319,7 @@ function receivedMessage(event) {
 
     // Use the NLP out of a can nlp.entities[name][0]
     const greeting = firstEntity(message.nlp, 'greeting');
-    console.log("greeting is %s " );
+    console.log("greeting is  "+ greeting );
     
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
@@ -315,8 +338,7 @@ function receivedMessage(event) {
 
 function addToSample(senderID, timeOfMessage){
   
-  var MongoClient = require('mongodb').MongoClient;
-  console.log("Adding %s to sample: ",senderID); 
+  console.log("Adding %s to sample: " + senderID); 
 
   request({
     uri: 'https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender',
@@ -326,30 +348,25 @@ function addToSample(senderID, timeOfMessage){
   }, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       
-      console.log("this the body: "+ JSON.stringify(body));
       var resp = JSON.parse(body);
-      console.log("First name: "+ resp['first_name']) ; 
-      console.log("Last name: "+ resp['last_name']) ;   
-      console.log("Gender: "+ resp['gender']) ; 
-  
-      // Add to sample database
-       MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
-      if (err) throw err;
-   
-      var user = {
-         first_name: resp['first_name'],
-          last_name: resp['last_name'],
-          gender: resp['gender'],
-          sender_id: senderID,
-          created_at: new Date(timeOfMessage)
-      };
 
-      db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
-        if (err) throw err;
-        console.log("1 document inserted");
-        db.close();
-      });
-    });
+       MongoClient.connect(SAMPLE_DATABASE_URL, function(err, db) {
+          if (err) throw err;
+       
+          var user = {
+             first_name: resp['first_name'],
+              last_name: resp['last_name'],
+              gender: resp['gender'],
+              user_id: senderID,
+              created_at: new Date(timeOfMessage)
+          };
+
+          db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
+            if (err) throw err;
+            console.log("1 document inserted");
+            db.close();
+          });
+        });
       
     } else {
       console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
@@ -369,7 +386,7 @@ function removeFromSample(senderID){
     if (err) throw err;
  
     var user = {
-        study_id: senderID
+        user_id: senderID
     };
 
     db.collection(SAMPLE_COLLECTION_NAME).deleteOne(user, function(err, res) {
