@@ -305,6 +305,7 @@ function receivedMessage(event) {
       case 'Yes':
       case 'yes':
         addToSample(senderID, timeOfMessage);
+        sendTextMessage(senderID, "We've added you to the panel. You should receive your first survey within the next week. If at any time you would like to leave the panel, just let us know. Thanks for your participation. ");
         break;  
       case 'No':
       case 'no':
@@ -340,7 +341,7 @@ function receivedMessage(event) {
 
 function addToSample(senderID, timeOfMessage){
   
-  console.log("Adding %s to sample: " + senderID); 
+  console.log("Adding %s to sample: ", senderID); 
 
   request({
     uri: 'https://graph.facebook.com/v2.6/'+senderID+'?fields=first_name,last_name,profile_pic,gender',
