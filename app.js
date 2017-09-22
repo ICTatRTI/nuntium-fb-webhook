@@ -18,7 +18,6 @@ const
   csv = require('express-csv'),
   https = require('https'),  
   request = require('request'),
-  nuntium = require('nuntium-client'),
   MongoClient = require('mongodb').MongoClient, 
   assert = require('assert');
 
@@ -79,7 +78,11 @@ const SAMPLE_COLLECTION_NAME = (process.env.SAMPLE_COLLECTION_NAME) ?
   (process.env.SAMPLE_COLLECTION_NAME) :
   config.get('sampleCollectionName');
 
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD && NUNTIUM_APPLICATION && SAMPLE_COLLECTION_NAME && SAMPLE_COLLECTION_NAME)) {
+const FACEBOOK_APP_ID = (process.env.FACEBOOK_APP_ID) ?
+  (process.env.FACEBOOK_APP_ID) :
+  config.get('facebookAppId');
+
+if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL && NUNTIUM_URL && NUNTIUM_USERNAME && NUNTIUM_PASSWORD && NUNTIUM_APPLICATION && SAMPLE_COLLECTION_NAME && SAMPLE_COLLECTION_NAME && FACEBOOK_APP_ID)) {
   console.error("Some config values are missing, alright");
   process.exit(1);
 }
@@ -281,20 +284,9 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
 
-  var client = new nuntium.Client(NUNTIUM_URL, NUNTIUM_USERNAME, NUNTIUM_APPLICATION, NUNTIUM_PASSWORD);
-    
-    /*
-    client.sendAO({'body':'Hello World','to':'sms://1234'}, function(data) {
-      // This isn't implemented yet
-      console.log('sent nuntium AO message (application originated')
-      console.log(data);
-      // Do some other stuff here
-    });
-    */
+  if (messageText && isNaN(messageText)) {
 
-  if (messageText) {
-
-    switch (messageText) {
+    switch (messageText.toLowerCase()) {
 
       case 'button':
         sendButtonMessage(senderID);
@@ -302,12 +294,10 @@ function receivedMessage(event) {
       case 'quick reply':
         sendQuickReply(senderID);
         break;  
-      case 'Yes':
       case 'yes':
         addToSample(senderID, timeOfMessage);
         sendTextMessage(senderID, "We've added you to the panel. You should receive your first survey within the next week. If at any time you would like to leave the panel, just let us know. Thanks for your participation. ");
         break;  
-      case 'No':
       case 'no':
         removeFromSample(senderID);
         break;        
@@ -320,7 +310,6 @@ function receivedMessage(event) {
     const greeting = firstEntity(message.nlp, 'greetings');
     const intent = firstEntity(message.nlp, 'intent');
     
-
     if (greeting && greeting.confidence > 0.8) {
       sendTextMessage(senderID, "Well, hello there!");
     } else if(intent && intent.confidence > 0.8 && intent.value == "unenroll") { 
@@ -332,8 +321,28 @@ function receivedMessage(event) {
 
     }
 
-  } else if (messageAttachments) {
-    sendTextMessage(senderID, "Message with attachment received");
+  } else {
+    
+    // Send to nuntium
+     var auth = 'Basic ' + new Buffer(NUNTIUM_USERNAME + ':' + NUNTIUM_PASSWORD).toString('base64');
+
+      var options = { 
+        method: 'POST',
+        url: NUNTIUM_URL+'/'+NUNTIUM_USERNAME+'/messenger/incoming',
+        headers: 
+         { 'cache-control': 'no-cache',
+           authorization: auth},
+        formData: 
+         { From: 'sms://'+senderID,
+           To: FACEBOOK_APP_ID,
+           Body: '1',
+           token: PAGE_ACCESS_TOKEN } 
+         };
+
+      request(options, function (error, response, body) {
+        if (error) throw new Error(error);
+        console.log(body);
+      });
   }
  
 }
@@ -360,13 +369,14 @@ function addToSample(senderID, timeOfMessage){
              first_name: resp['first_name'],
               last_name: resp['last_name'],
               gender: resp['gender'],
+              profile_pic: resp['profile_pic'],
               user_id: senderID,
               created_at: new Date(timeOfMessage)
           };
 
           db.collection(SAMPLE_COLLECTION_NAME).insertOne(user, function(err, res) {
             if (err) throw err;
-            console.log("1 document inserted");
+            console.log("1 user added");
             db.close();
           });
         });
