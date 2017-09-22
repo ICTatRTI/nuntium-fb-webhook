@@ -10,5 +10,6 @@
     "nuntiumURL" : "NUNTIUM_APPLICATION",
     "sampleDatabaseURL": "mongodb://USER:PASSWORD@www.mlab.com:PORT/database_name",
     "sampleCollectionName": "COLLECTION_NAME",
+    "facebookAppId": "FACEBOOK_APP_ID"
 
 }
