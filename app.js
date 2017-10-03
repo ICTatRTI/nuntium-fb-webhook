@@ -335,7 +335,7 @@ function receivedMessage(event) {
         formData: 
          { From: 'sms://'+senderID,
            To: FACEBOOK_APP_ID,
-           Body: '1',
+           Body: messageText,
            token: PAGE_ACCESS_TOKEN } 
          };
 
