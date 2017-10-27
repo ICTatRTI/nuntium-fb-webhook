@@ -285,7 +285,9 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
   if (messageText && isNaN(messageText)) {
+        
 
+    // exact matches
     switch (messageText.toLowerCase()) {
 
       case 'button':
@@ -306,6 +308,13 @@ function receivedMessage(event) {
         console.log("Nothing else matches going with default %s with payload %s",
       senderID, messageText); 
 
+
+    //funny joke
+    if  (messageText.toLowerCase().startsWith("/get")){
+        sendImageMessage(senderID,messageText);
+        return;
+    }   
+
     // Use the NLP out of a can nlp.entities[name][0]
     const greeting = firstEntity(message.nlp, 'greetings');
     const intent = firstEntity(message.nlp, 'intent');
@@ -315,8 +324,10 @@ function receivedMessage(event) {
     } else if(intent && intent.confidence > 0.8 && intent.value == "unenroll") { 
         sendTextMessage(senderID, "No problem. I will take you off the list now"); 
         removeFromSample(senderID);
+    } else if(intent && intent.confidence > 0.8 && intent.value == "enroll") { 
+      sendTextMessage(senderID, "Ok, so you would you like to participate in a survey, right?");  
     } else {
-      sendTextMessage(senderID, "Would you like to participate in a survey?");  
+      sendTextMessage(senderID, "Sorry, I didn't get that. Try something else.");  
     }
 
     }
@@ -435,6 +446,30 @@ function receivedDeliveryConfirmation(event) {
   console.log("All message before %d were delivered.", watermark);
 }
 
+function sendImageMessage(recipientId,messageText) {
+  
+  var imagename = "potato.jpg";
+  var res = messageText.split(" ");
+  if(res.length > 1 && res[1].toLowerCase() == "wayne"){
+    imagename = "wayne.jpg";
+  }
+
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    message: {
+      attachment: {
+        type: "image",
+        payload: {
+          url: SERVER_URL + "/assets/"+imagename
+        }
+      }
+    }
+  };
+
+  callSendAPI(messageData);
+}
 
 /*
  * Postback Event
