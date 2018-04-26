@@ -15,14 +15,17 @@
   "author": "RTI",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "config": "^1.20.4",
-    "ejs": "^2.4.2",
-    "express": "^4.13.4",
+    "body-parser": "^1.18.2",
+    "config": "^1.30.0",
+    "ejs": "^2.5.9",
+    "express": "^4.16.3",
     "express-csv": "^0.6.0",
     "mongo": "^0.1.0",
+    "npm": "^6.0.0",
     "nuntium-client": "0.0.3",
-    "request": "^2.81.0"
+    "request": "^2.85.0",
+    "to": "^0.2.9",
+    "update": "^0.7.4"
   },
   "engines": {
     "node": "8.2.1"
